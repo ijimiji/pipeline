@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -26,21 +25,9 @@ func main() {
 	sd := sd.New()
 	defer sd.Close()
 
-	generationProcessor := processor.New(cfg.GenerationProcessor, sqsClient, func(ctx context.Context, req image.GenerateRequest) (image.GenerateResponse, error) {
-		var ret image.GenerateResponse
-		image, err := sd.Inference(req.Prompt)
-		if err != nil {
-			return ret, err
-		}
+	imageGenerator := image.New(s3Client, sd)
 
-		if err := s3Client.Put(req.ID, "generation", image); err != nil {
-			return ret, err
-		}
-		ret.ID = req.ID
-		fmt.Println("http://localhost:4566/generation/" + req.ID)
-
-		return ret, nil
-	})
+	generationProcessor := processor.New(cfg.GenerationProcessor, sqsClient, imageGenerator.Process)
 
 	generationContext, generationCancel := context.WithCancel(context.Background())
 	go func() {

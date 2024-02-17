@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"time"
 
 	"math/rand"
 
@@ -15,7 +16,10 @@ import (
 func New() *StableDiffusion {
 	options := sd.DefaultOptions
 	options.Threads = 6
+	options.FreeParamsImmediately = false
 	// options.GpuEnable = true
+
+	rand.Seed(time.Now().Unix())
 
 	model, err := sd.NewAutoModel(options)
 	if err != nil {
@@ -37,15 +41,18 @@ func New() *StableDiffusion {
 		panic(err)
 	}
 
+	fmt.Println("model ready")
+
 	return &StableDiffusion{
-		model: model,
+		model:     model,
+		modelPath: modelPath,
 		params: sd.FullParams{
 			NegativePrompt:   "out of frame, lowers, text, error, cropped, worst quality, low quality, jpeg artifacts, ugly, duplicate, morbid, mutilated, out of frame, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, dehydrated, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck, username, watermark, signature",
 			CfgScale:         7.0,
-			Width:            128,
-			Height:           128,
+			Width:            256,
+			Height:           256,
 			SampleMethod:     sd.DPMPP2S_A,
-			SampleSteps:      5,
+			SampleSteps:      10,
 			Strength:         0.4,
 			Seed:             13,
 			BatchCount:       1,
@@ -55,8 +62,9 @@ func New() *StableDiffusion {
 }
 
 type StableDiffusion struct {
-	model  *sd.Model
-	params sd.FullParams
+	model     *sd.Model
+	params    sd.FullParams
+	modelPath string
 }
 
 func (s *StableDiffusion) Close() {
@@ -68,7 +76,7 @@ func (s *StableDiffusion) Inference(prompt string) ([]byte, error) {
 	params := s.params
 	params.Seed = int64(rand.Int())
 
-	if err := s.model.Predict(prompt, s.params, []io.Writer{bufio.NewWriter(&b)}); err != nil {
+	if err := s.model.Predict(prompt, params, []io.Writer{bufio.NewWriter(&b)}); err != nil {
 		return nil, err
 	}
 

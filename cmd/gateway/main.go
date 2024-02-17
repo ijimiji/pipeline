@@ -1,11 +1,19 @@
 package main
 
+// @title Gateway API
+// @version 1.0
+// @description Common API for generating images and etc.
+
+// @host localhost:3030
+// @BasePath /api/v1
+
 import (
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
 
+	_ "github.com/ijimiji/pipeline/docs"
 	"github.com/ijimiji/pipeline/internal/api/http"
 	"github.com/ijimiji/pipeline/internal/config"
 	"github.com/ijimiji/pipeline/internal/services/core"

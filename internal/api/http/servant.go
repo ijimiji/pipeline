@@ -8,13 +8,20 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/ijimiji/pipeline/internal/api/http/images"
 	"github.com/ijimiji/pipeline/internal/services/core"
+	swagger "github.com/swaggo/http-swagger/v2"
 )
 
 func NewServant(config Config, coreClient core.Client) *servant {
 	router := chi.NewRouter()
-	router.Use(middleware.Logger, middleware.Recoverer)
+	router.Use(middleware.Logger, middleware.Recoverer, SwaggerCORS)
 
-	router.Mount("/images", images.New(coreClient))
+	apiRouter := chi.NewRouter()
+	apiRouter.Mount("/images", images.New(coreClient))
+	router.Get("/swagger/*", swagger.Handler(
+		swagger.URL("swagger/doc.json"),
+	))
+
+	router.Mount("/api/v1", apiRouter)
 
 	return &servant{
 		config: config,
