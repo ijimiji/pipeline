@@ -6,6 +6,7 @@ require (
 	github.com/aws/aws-sdk-go v1.50.20
 	github.com/go-chi/chi/v5 v5.0.12
 	github.com/google/uuid v1.6.0
+	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/seasonjs/hf-hub v0.0.4
 	github.com/seasonjs/stable-diffusion v0.2.0
 	github.com/swaggo/http-swagger/v2 v2.0.2

@@ -14,7 +14,163 @@ const docTemplate = `{
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
-    "paths": {}
+    "paths": {
+        "/images/generate": {
+            "post": {
+                "description": "Generate new image by given prompt.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Image generation flow"
+                ],
+                "summary": "Generate new image",
+                "parameters": [
+                    {
+                        "description": "Request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/images.generateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/images.generateResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/images/{id}": {
+            "get": {
+                "description": "Get image generation status",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Image generation flow"
+                ],
+                "summary": "Get image generation status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Image group ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/images.statusResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Discard image generation",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Image generation flow"
+                ],
+                "summary": "Discard image generation",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Image group ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        }
+    },
+    "definitions": {
+        "images.generateRequest": {
+            "type": "object",
+            "properties": {
+                "imagesCount": {
+                    "description": "@Description Amount of images to be drawn for your request",
+                    "type": "integer",
+                    "example": 4
+                },
+                "prompt": {
+                    "description": "@Description What should be drawn",
+                    "type": "string",
+                    "example": "very fat cat"
+                }
+            }
+        },
+        "images.generateResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "@Description ID of image group",
+                    "type": "string",
+                    "example": "1234"
+                }
+            }
+        },
+        "images.statusResponse": {
+            "type": "object",
+            "properties": {
+                "imageGroup": {
+                    "$ref": "#/definitions/models.ImageGroup"
+                }
+            }
+        },
+        "models.Image": {
+            "type": "object",
+            "properties": {
+                "generationStatus": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "prompt": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ImageGroup": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Image"
+                    }
+                }
+            }
+        }
+    }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it

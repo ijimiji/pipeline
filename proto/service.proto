@@ -6,9 +6,40 @@ option go_package = "./proto";
 
 service Core {
   rpc Generate(GenerateRequest) returns (GenerateResponse);
+  rpc Discard(DiscardRequest) returns (DiscardResponse);
+  rpc Status(StatusRequest) returns (StatusResponse);
 }
 message GenerateRequest {
+  string Prompt = 1;
 }
 
 message GenerateResponse {
+  string ID = 2;
+}
+
+message StatusRequest {
+  string ID = 1;
+}
+
+message StatusResponse {
+  ImageGroup ImageGroup = 1;
+}
+
+message DiscardRequest {
+  string ID = 1;
+}
+
+message DiscardResponse {
+}
+
+message Image {
+  string ID = 1;
+  string Prompt = 2;
+  string URL = 3;
+  string Status = 4;
+}
+
+message ImageGroup {
+  string ID = 1;
+  repeated Image Images = 2;
 }

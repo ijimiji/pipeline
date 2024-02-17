@@ -9,6 +9,8 @@ func New(coreClient core.Client) chi.Router {
 	router := chi.NewRouter()
 
 	router.Post("/generate", newGenerateHandler(coreClient).ServeHTTP)
+	router.Get("/{id}", newStatusHandler(coreClient).ServeHTTP)
+	router.Delete("/{id}", newDiscardHandler(coreClient).ServeHTTP)
 
 	return router
 }

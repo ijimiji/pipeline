@@ -6,6 +6,5 @@ type GenerateRequest struct {
 }
 
 type GenerateResponse struct {
-	ID  string
-	URL string
+	ID string
 }

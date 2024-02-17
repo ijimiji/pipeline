@@ -49,10 +49,10 @@ func New() *StableDiffusion {
 		params: sd.FullParams{
 			NegativePrompt:   "out of frame, lowers, text, error, cropped, worst quality, low quality, jpeg artifacts, ugly, duplicate, morbid, mutilated, out of frame, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, dehydrated, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck, username, watermark, signature",
 			CfgScale:         7.0,
-			Width:            256,
-			Height:           256,
+			Width:            64,
+			Height:           64,
 			SampleMethod:     sd.DPMPP2S_A,
-			SampleSteps:      10,
+			SampleSteps:      5,
 			Strength:         0.4,
 			Seed:             13,
 			BatchCount:       1,

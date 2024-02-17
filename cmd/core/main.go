@@ -11,7 +11,9 @@ import (
 	"github.com/ijimiji/pipeline/internal/config"
 	"github.com/ijimiji/pipeline/internal/managers/image"
 	"github.com/ijimiji/pipeline/internal/processor"
+	imagerepository "github.com/ijimiji/pipeline/internal/repositories/image"
 	"github.com/ijimiji/pipeline/internal/services/s3"
+	"github.com/ijimiji/pipeline/internal/services/sqlite"
 	"github.com/ijimiji/pipeline/internal/services/sqs"
 )
 
@@ -23,7 +25,11 @@ func main() {
 
 	sqsClient := sqs.New()
 	s3Client := s3.New()
-	imagesManager := image.New(cfg.ImageGeneration, sqsClient, s3Client)
+
+	db := sqlite.New()
+	imageRepository := imagerepository.New(db)
+
+	imagesManager := image.New(cfg.ImageGeneration, sqsClient, s3Client, imageRepository)
 	imageGenerationProcessor := processor.New(cfg.ResultsProcessor, sqsClient, imagesManager.Process)
 	resultsContext, resultsCancel := context.WithCancel(context.Background())
 	go func() {

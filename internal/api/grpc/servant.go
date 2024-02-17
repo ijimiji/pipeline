@@ -6,8 +6,12 @@ import (
 	"net"
 
 	"github.com/ijimiji/pipeline/internal/managers/image"
+	"github.com/ijimiji/pipeline/internal/models"
+	"github.com/ijimiji/pipeline/internal/slices"
 	"github.com/ijimiji/pipeline/proto"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func New(
@@ -27,10 +31,38 @@ type servant struct {
 }
 
 func (s *servant) Generate(ctx context.Context, req *proto.GenerateRequest) (*proto.GenerateResponse, error) {
-	_, err := s.imageManager.Generate(ctx, image.Params{
-		Prompt: "very fat bober",
+	out, err := s.imageManager.Generate(ctx, image.Params{
+		Prompt: req.GetPrompt(),
 	})
-	return &proto.GenerateResponse{}, err
+
+	return &proto.GenerateResponse{
+		ID: out.ID,
+	}, err
+}
+
+func (s *servant) Discard(context.Context, *proto.DiscardRequest) (*proto.DiscardResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Discard not implemented")
+}
+
+func (s *servant) Status(ctx context.Context, req *proto.StatusRequest) (*proto.StatusResponse, error) {
+	imageGroup, err := s.imageManager.Status(ctx, req.GetID())
+	if err != nil {
+		return nil, err
+	}
+
+	return &proto.StatusResponse{
+		ImageGroup: &proto.ImageGroup{
+			ID: imageGroup.ID,
+			Images: slices.Map(imageGroup.Images, func(image models.Image) *proto.Image {
+				return &proto.Image{
+					ID:     image.ID,
+					Prompt: image.Prompt,
+					URL:    image.URL,
+					Status: image.GenerationStatus,
+				}
+			}),
+		},
+	}, nil
 }
 
 func (s *servant) ListenAndServe() error {
