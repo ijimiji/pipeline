@@ -9,6 +9,15 @@ import (
 	"github.com/ijimiji/pipeline/internal/services/core"
 	"github.com/ijimiji/pipeline/internal/slices"
 	"github.com/ijimiji/pipeline/proto"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
+)
+
+var (
+	opsProcessed = promauto.NewCounter(prometheus.CounterOpts{
+		Name: "myapp_processed_ops_total",
+		Help: "The total number of processed events",
+	})
 )
 
 type statusResponse struct {
@@ -34,6 +43,8 @@ type StatusHandler struct {
 // @Router /images/{id} [get]
 // @Param id path string true "Image group ID"
 func (h *StatusHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	opsProcessed.Inc()
+
 	encoder := json.NewEncoder(w)
 	id := chi.URLParam(r, "id")
 

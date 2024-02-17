@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -15,11 +16,17 @@ import (
 	"github.com/ijimiji/pipeline/internal/services/s3"
 	"github.com/ijimiji/pipeline/internal/services/sqlite"
 	"github.com/ijimiji/pipeline/internal/services/sqs"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func main() {
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
+		http.Handle("/metrics", promhttp.Handler())
+		http.ListenAndServe(":2112", nil)
+	}()
 
 	cfg := config.New[Config](os.Args[len(os.Args)-1])
 
