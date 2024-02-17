@@ -1,0 +1,11 @@
+{
+    "API": {
+        "Port": 3031
+    },
+    "ResultsProcessor": {
+        "InputQueue": "results"
+    },
+    "ImageGeneration": {
+        "GenerationQueue": "generation"
+    }
+}

@@ -1,0 +1,6 @@
+{
+    "GenerationProcessor": {
+        "InputQueue": "generation",
+        "OutputQueue": "results"
+    }
+}

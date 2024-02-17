@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package proto.echo;
+
+option go_package = "./proto";
+
+service Core {
+  rpc Generate(GenerateRequest) returns (GenerateResponse);
+}
+message GenerateRequest {
+}
+
+message GenerateResponse {
+}

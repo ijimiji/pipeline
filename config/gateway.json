@@ -1,0 +1,8 @@
+{
+    "API": {
+        "Port": 3030
+    },
+    "Core": {
+        "Endpoint": "localhost:3031"
+    }
+}
