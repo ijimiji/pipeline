@@ -3,7 +3,6 @@ package image
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/ijimiji/pipeline/internal/generators/image"
@@ -57,12 +56,9 @@ func (m *Manager) Process(ctx context.Context, image image.GenerateResponse) (st
 		return ret, err
 	}
 
-	key, err := m.s3.Put(image.ID, "images", generatedImage)
-	if err != nil {
+	if err := m.s3.Put(image.ID, "images", generatedImage); err != nil {
 		return ret, err
 	}
-
-	fmt.Println(key)
 
 	return ret, nil
 }

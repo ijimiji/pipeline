@@ -52,15 +52,16 @@ func (c *Client) Get(id string, bucket string) ([]byte, error) {
 	return io.ReadAll(out.Body)
 }
 
-func (c *Client) Put(key string, bucket string, payload []byte) (string, error) {
+func (c *Client) Put(key string, bucket string, payload []byte) error {
 	_, err := c.originalClient.PutObject(&s3.PutObjectInput{
-		Body:   bytes.NewReader(payload),
-		Bucket: ptr.T(bucket),
-		Key:    ptr.T(key),
+		Body:        bytes.NewReader(payload),
+		Bucket:      ptr.T(bucket),
+		Key:         ptr.T(key),
+		ContentType: ptr.T("image/png"),
 	})
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	return key, nil
+	return nil
 }
