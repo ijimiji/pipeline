@@ -22,7 +22,7 @@ func main() {
 
 	sqsClient := sqs.New()
 	s3Client := s3.New()
-	sd := sd.New()
+	sd := sd.New(cfg.StableDiffusion)
 	defer sd.Close()
 
 	imageGenerator := image.New(s3Client, sd)

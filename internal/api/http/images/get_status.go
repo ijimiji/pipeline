@@ -12,7 +12,7 @@ import (
 )
 
 type statusResponse struct {
-	ImageGroup models.ImageGroup
+	ImageGroup models.ImageGroup `json:"imageGroup"`
 }
 
 func newStatusHandler(coreClient core.Client) *StatusHandler {
@@ -50,8 +50,10 @@ func (h *StatusHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			ID: out.GetImageGroup().GetID(),
 			Images: slices.Map(out.GetImageGroup().GetImages(), func(dto *proto.Image) models.Image {
 				return models.Image{
-					ID:  dto.GetID(),
-					URL: dto.GetURL(),
+					ID:               dto.GetID(),
+					URL:              dto.GetURL(),
+					Prompt:           dto.GetPrompt(),
+					GenerationStatus: dto.GetStatus(),
 				}
 			}),
 		},

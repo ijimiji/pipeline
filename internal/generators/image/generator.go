@@ -8,7 +8,7 @@ import (
 	"github.com/ijimiji/pipeline/internal/services/sd"
 )
 
-func New(s3Client *s3.Client, sd *sd.StableDiffusion) *Generator {
+func New(s3Client *s3.Client, sd sd.Client) *Generator {
 	return &Generator{
 		s3Client: s3Client,
 		sd:       sd,
@@ -17,12 +17,12 @@ func New(s3Client *s3.Client, sd *sd.StableDiffusion) *Generator {
 
 type Generator struct {
 	s3Client *s3.Client
-	sd       *sd.StableDiffusion
+	sd       sd.Client
 }
 
 func (g *Generator) Process(ctx context.Context, req GenerateRequest) (GenerateResponse, error) {
 	var ret GenerateResponse
-	image, err := g.sd.Inference(req.Prompt)
+	image, err := g.sd.Inference(ctx, req.Prompt)
 	if err != nil {
 		return ret, err
 	}

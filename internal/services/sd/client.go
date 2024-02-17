@@ -3,6 +3,7 @@ package sd
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"time"
@@ -13,7 +14,7 @@ import (
 	sd "github.com/seasonjs/stable-diffusion"
 )
 
-func New() *StableDiffusion {
+func newClient() *StableDiffusion {
 	options := sd.DefaultOptions
 	options.Threads = 6
 	options.FreeParamsImmediately = false
@@ -71,7 +72,7 @@ func (s *StableDiffusion) Close() {
 	fmt.Println(s.model.Close())
 }
 
-func (s *StableDiffusion) Inference(prompt string) ([]byte, error) {
+func (s *StableDiffusion) Inference(ctx context.Context, prompt string) ([]byte, error) {
 	var b bytes.Buffer
 	params := s.params
 	params.Seed = int64(rand.Int())

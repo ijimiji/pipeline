@@ -13,7 +13,7 @@ import (
 
 func NewServant(config Config, coreClient core.Client) *servant {
 	router := chi.NewRouter()
-	router.Use(middleware.Logger, middleware.Recoverer, SwaggerCORS)
+	router.Use(middleware.Logger, middleware.Recoverer, SwaggerCORS, JSON)
 
 	apiRouter := chi.NewRouter()
 	apiRouter.Mount("/images", images.New(coreClient))
