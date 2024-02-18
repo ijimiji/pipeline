@@ -8,19 +8,29 @@ services:
       - "127.0.0.1:4566:4566"            # LocalStack Gateway
       - "127.0.0.1:4510-4559:4510-4559"  # external services port range
     environment:
-      # LocalStack configuration: https://docs.localstack.cloud/references/configuration/
       - DEBUG=${DEBUG:-0}
     volumes:
       - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
+  prometheus:
+    image: prom/prometheus:v2.25.0
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prom_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - 9090:9090
+
   grafana:
-      image: grafana/grafana:7.5.7
-      ports:
-        - 3000:3000
-      restart: unless-stopped
-      volumes:
-        - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
-        - grafana-data:/var/lib/grafana
-        
+    image: grafana/grafana:7.5.7
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana:/etc/grafana/provisioning/datasources
+
 volumes:
   grafana-data:
+  prom_data:

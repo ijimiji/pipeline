@@ -1,3 +1,4 @@
 localstack
 docker/volume
 design.drawio
+store.db

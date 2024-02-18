@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"log/slog"
+	"time"
 
 	"github.com/ijimiji/pipeline/internal/services/sqs"
 )
@@ -26,6 +27,7 @@ type Processor[Request any, Response any] struct {
 
 func (p *Processor[Request, Response]) Process(ctx context.Context) error {
 	for {
+		time.Sleep(time.Second * 4)
 		select {
 		case <-ctx.Done():
 			return nil

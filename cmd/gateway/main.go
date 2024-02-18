@@ -27,7 +27,7 @@ func main() {
 	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 
 	go func() {
-		stdhttp.Handle("/metrics", http.SwaggerCORS(promhttp.Handler()))
+		stdhttp.Handle("/metrics", promhttp.Handler())
 		stdhttp.ListenAndServe(":2113", nil)
 	}()
 
