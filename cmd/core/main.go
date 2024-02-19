@@ -10,6 +10,7 @@ import (
 
 	"github.com/ijimiji/pipeline/internal/api/grpc"
 	"github.com/ijimiji/pipeline/internal/config"
+	"github.com/ijimiji/pipeline/internal/instrumentation"
 	"github.com/ijimiji/pipeline/internal/managers/image"
 	"github.com/ijimiji/pipeline/internal/processor"
 	imagerepository "github.com/ijimiji/pipeline/internal/repositories/image"
@@ -22,6 +23,9 @@ import (
 func main() {
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+
+	tracer := instrumentation.NewTracer("core")
+	defer tracer.Close()
 
 	go func() {
 		http.Handle("/metrics", promhttp.Handler())

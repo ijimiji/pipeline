@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/ijimiji/pipeline/internal/services/sqs"
+	"go.opentelemetry.io/otel"
 )
 
 type processFunc[Request any, Response any] func(ctx context.Context, request Request) (Response, error)
@@ -27,46 +28,52 @@ type Processor[Request any, Response any] struct {
 
 func (p *Processor[Request, Response]) Process(ctx context.Context) error {
 	for {
-		time.Sleep(time.Second * 4)
+		time.Sleep(time.Second * 1)
 		select {
 		case <-ctx.Done():
 			return nil
 		default:
-			message, err := p.sqs.Recieve(p.config.InputQueue)
-			if err != nil {
-				slog.Error(err.Error())
-				continue
-			}
+			func(ctx context.Context) {
+				message, carrier, err := p.sqs.Recieve(ctx, p.config.InputQueue)
+				if err != nil {
+					slog.Error(err.Error())
+					return
+				}
 
-			if len(message) == 0 {
-				continue
-			}
+				if len(message) == 0 {
+					return
+				}
 
-			var req Request
-			if err := json.Unmarshal(message, &req); err != nil {
-				slog.Error(err.Error())
-				continue
-			}
+				tracer := otel.Tracer("processor")
+				ctx, span := tracer.Start(otel.GetTextMapPropagator().Extract(ctx, carrier), "processor")
+				defer span.End()
 
-			resp, err := p.pFunc(ctx, req)
-			if err != nil {
-				slog.Error(err.Error())
-				continue
-			}
+				var req Request
+				if err := json.Unmarshal(message, &req); err != nil {
+					slog.Error(err.Error())
+					return
+				}
 
-			if len(p.config.OutputQueue) == 0 {
-				continue
-			}
+				resp, err := p.pFunc(ctx, req)
+				if err != nil {
+					slog.Error(err.Error())
+					return
+				}
 
-			payload, err := json.Marshal(resp)
-			if err != nil {
-				slog.Error(err.Error())
-				continue
-			}
+				if len(p.config.OutputQueue) == 0 {
+					return
+				}
 
-			if err := p.sqs.Put(p.config.OutputQueue, payload); err != nil {
-				slog.Error(err.Error())
-			}
+				payload, err := json.Marshal(resp)
+				if err != nil {
+					slog.Error(err.Error())
+					return
+				}
+
+				if err := p.sqs.Put(ctx, p.config.OutputQueue, payload); err != nil {
+					slog.Error(err.Error())
+				}
+			}(context.Background())
 		}
 	}
 }

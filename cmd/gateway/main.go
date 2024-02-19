@@ -18,6 +18,7 @@ import (
 	_ "github.com/ijimiji/pipeline/docs"
 	"github.com/ijimiji/pipeline/internal/api/http"
 	"github.com/ijimiji/pipeline/internal/config"
+	"github.com/ijimiji/pipeline/internal/instrumentation"
 	"github.com/ijimiji/pipeline/internal/services/core"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
@@ -25,6 +26,9 @@ import (
 func main() {
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+
+	tracer := instrumentation.NewTracer("gateway")
+	defer tracer.Close()
 
 	go func() {
 		stdhttp.Handle("/metrics", promhttp.Handler())

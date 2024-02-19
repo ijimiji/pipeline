@@ -51,7 +51,7 @@ func (m *Manager) Generate(ctx context.Context, params Params) (image.GenerateRe
 		return image.GenerateResponse{}, err
 	}
 
-	if err := m.sqs.Put(m.config.GenerationQueue, marshaled); err != nil {
+	if err := m.sqs.Put(ctx, m.config.GenerationQueue, marshaled); err != nil {
 		return image.GenerateResponse{}, err
 	}
 
@@ -77,12 +77,12 @@ func (m *Manager) Status(ctx context.Context, id string) (models.ImageGroup, err
 func (m *Manager) Process(ctx context.Context, image image.GenerateResponse) (struct{}, error) {
 	var ret struct{}
 
-	generatedImage, err := m.s3.Get(image.ID, "generation")
+	generatedImage, err := m.s3.Get(ctx, image.ID, "generation")
 	if err != nil {
 		return ret, err
 	}
 
-	if err := m.s3.Put(image.ID, "images", generatedImage); err != nil {
+	if err := m.s3.Put(ctx, image.ID, "images", generatedImage); err != nil {
 		return ret, err
 	}
 

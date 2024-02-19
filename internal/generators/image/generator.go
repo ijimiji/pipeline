@@ -27,7 +27,7 @@ func (g *Generator) Process(ctx context.Context, req GenerateRequest) (GenerateR
 		return ret, err
 	}
 
-	if err := g.s3Client.Put(req.ID, "generation", image); err != nil {
+	if err := g.s3Client.Put(ctx, req.ID, "generation", image); err != nil {
 		return ret, err
 	}
 	ret.ID = req.ID

@@ -9,11 +9,13 @@ import (
 	"github.com/ijimiji/pipeline/internal/api/http/images"
 	"github.com/ijimiji/pipeline/internal/services/core"
 	swagger "github.com/swaggo/http-swagger/v2"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
+	"go.opentelemetry.io/otel/propagation"
 )
 
 func NewServant(config Config, coreClient core.Client) *servant {
 	router := chi.NewRouter()
-	router.Use(middleware.Logger, middleware.Recoverer, SwaggerCORS, JSON)
+	router.Use(otelhttp.NewMiddleware("", otelhttp.WithServerName("gateway"), otelhttp.WithPropagators(propagation.TraceContext{})), middleware.Logger, middleware.Recoverer, SwaggerCORS, JSON)
 
 	apiRouter := chi.NewRouter()
 	apiRouter.Mount("/images", images.New(coreClient))

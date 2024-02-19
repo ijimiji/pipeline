@@ -4,10 +4,13 @@ import (
 	"database/sql"
 
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/uptrace/opentelemetry-go-extra/otelsql"
 )
 
 func New() *Database {
-	db, err := sql.Open("sqlite3", "store.db")
+	db, err := otelsql.Open("sqlite3", "file::memory:?cache=shared",
+		otelsql.WithDBName("sqlite"),
+	)
 	if err != nil {
 		panic(err)
 	}

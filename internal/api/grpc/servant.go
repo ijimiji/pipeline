@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 
+	"github.com/ijimiji/pipeline/internal/instrumentation"
 	"github.com/ijimiji/pipeline/internal/managers/image"
 	"github.com/ijimiji/pipeline/internal/models"
 	"github.com/ijimiji/pipeline/internal/slices"
@@ -71,7 +72,9 @@ func (s *servant) ListenAndServe() error {
 		return err
 	}
 
-	server := grpc.NewServer()
+	server := grpc.NewServer(
+		instrumentation.GRPC...,
+	)
 
 	proto.RegisterCoreServer(server, s)
 

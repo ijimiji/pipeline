@@ -9,6 +9,7 @@ import (
 
 	"github.com/ijimiji/pipeline/internal/config"
 	"github.com/ijimiji/pipeline/internal/generators/image"
+	"github.com/ijimiji/pipeline/internal/instrumentation"
 	"github.com/ijimiji/pipeline/internal/processor"
 	"github.com/ijimiji/pipeline/internal/services/s3"
 	"github.com/ijimiji/pipeline/internal/services/sd"
@@ -19,6 +20,9 @@ import (
 func main() {
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+
+	tracer := instrumentation.NewTracer("sidecar")
+	defer tracer.Close()
 
 	go func() {
 		http.Handle("/metrics", promhttp.Handler())
