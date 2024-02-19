@@ -53,7 +53,7 @@ type Client struct {
 
 func (c *Client) Put(ctx context.Context, queueName string, message []byte) error {
 	attrs := map[string]*sqs.MessageAttributeValue{}
-	otel.GetTextMapPropagator().Inject(ctx, instrumentation.NewSQSCarrier(attrs))
+	otel.GetTextMapPropagator().Inject(ctx, instrumentation.SQSCarrier(attrs))
 
 	_, err := c.originalClient.SendMessageWithContext(ctx, &sqs.SendMessageInput{
 		QueueUrl:          ptr.T(queueName),
@@ -77,7 +77,7 @@ func (c *Client) Recieve(ctx context.Context, queueName string) ([]byte, propaga
 		return nil, nil, nil
 	}
 	message := out.Messages[0]
-	carrier := instrumentation.NewSQSCarrier(message.MessageAttributes)
+	carrier := instrumentation.SQSCarrier(message.MessageAttributes)
 
 	return []byte(*message.Body), carrier, c.Delete(ctx, queueName, *out.Messages[0].ReceiptHandle)
 }

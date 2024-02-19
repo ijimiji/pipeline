@@ -8,6 +8,7 @@ import (
 
 	"github.com/ijimiji/pipeline/internal/services/sqs"
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/trace"
 )
 
 type processFunc[Request any, Response any] func(ctx context.Context, request Request) (Response, error)
@@ -34,18 +35,21 @@ func (p *Processor[Request, Response]) Process(ctx context.Context) error {
 			return nil
 		default:
 			func(ctx context.Context) {
+				ctx, preprocessSpan := otel.Tracer("processor").Start(ctx, "processor")
+
 				message, carrier, err := p.sqs.Recieve(ctx, p.config.InputQueue)
 				if err != nil {
 					slog.Error(err.Error())
 					return
 				}
+				preprocessSpan.End()
 
 				if len(message) == 0 {
 					return
 				}
 
 				tracer := otel.Tracer("processor")
-				ctx, span := tracer.Start(otel.GetTextMapPropagator().Extract(ctx, carrier), "processor")
+				ctx, span := tracer.Start(otel.GetTextMapPropagator().Extract(ctx, carrier), "processor", trace.WithLinks(trace.LinkFromContext(ctx)))
 				defer span.End()
 
 				var req Request
