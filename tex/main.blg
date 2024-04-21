@@ -1,0 +1,60 @@
+This is BibTeX, Version 0.99d (TeX Live 2023/Arch Linux)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main.aux
+A level-1 auxiliary file: title.aux
+A level-1 auxiliary file: intro.aux
+A level-1 auxiliary file: nn/stable.aux
+A level-1 auxiliary file: microservices.aux
+A level-1 auxiliary file: grpc.aux
+A level-1 auxiliary file: golang.aux
+A level-1 auxiliary file: stuff.aux
+A level-1 auxiliary file: work.aux
+A level-1 auxiliary file: conclusion.aux
+A level-1 auxiliary file: literature.aux
+The style file: unsrt.bst
+A level-1 auxiliary file: appendix.aux
+Database file #1: src.bib
+Warning--can't use both author and editor fields in micro-1
+Warning--empty chapter and pages in Bolanowski_2022
+You've used 9 entries,
+            1791 wiz_defined-function locations,
+            494 strings with 5914 characters,
+and the built_in function-call counts, 1600 in all, are:
+= -- 126
+> -- 63
+< -- 1
++ -- 26
+- -- 17
+* -- 71
+:= -- 216
+add.period$ -- 21
+call.type$ -- 9
+change.case$ -- 5
+chr.to.int$ -- 0
+cite$ -- 11
+duplicate$ -- 86
+empty$ -- 196
+format.name$ -- 17
+if$ -- 386
+int.to.chr$ -- 0
+int.to.str$ -- 9
+missing$ -- 9
+newline$ -- 40
+num.names$ -- 5
+pop$ -- 52
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 63
+stack$ -- 0
+substring$ -- 48
+swap$ -- 24
+text.length$ -- 1
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 2
+while$ -- 8
+width$ -- 10
+write$ -- 77
+(There were 2 warnings)
