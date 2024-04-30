@@ -68,7 +68,7 @@ func (c *Client) Recieve(ctx context.Context, queueName string) ([]byte, propaga
 	out, err := c.originalClient.ReceiveMessageWithContext(ctx, &sqs.ReceiveMessageInput{
 		QueueUrl:              ptr.T(queueName),
 		MaxNumberOfMessages:   ptr.T[int64](1),
-		MessageAttributeNames: []*string{aws.String(".*")},
+		MessageAttributeNames: []*string{aws.String("All")},
 	})
 	if err != nil {
 		return nil, nil, err
