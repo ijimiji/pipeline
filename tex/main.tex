@@ -56,9 +56,16 @@
 
 \renewcommand{\baselinestretch}{1.2}
 
+\lstset{
+  basicstyle=\ttfamily,
+  columns=fullflexible,
+  breaklines=true,
+  postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+}
+
 \begin{document}
 \include{title}
-% \include{essay}
+\include{essay}
 \tableofcontents
 \include{intro}
 \include{microservices}

@@ -20,3 +20,107 @@
 \end{figure}
 
 \end{footnotesize}
+
+Далее будут приведены ключевые файлы конфигурации и описания приложения.
+
+\subsection*{Docker compose спецификация для локального запуска микросервисов}
+\begin{lstlisting}[]
+version: "3.8"
+
+services:
+  localstack:
+    container_name: "${LOCALSTACK_DOCKER_NAME:-localstack-main}"
+    image: localstack/localstack
+    ports:
+      - "127.0.0.1:4566:4566"
+      - "127.0.0.1:4510-4559:4510-4559"
+    environment:
+      - DEBUG=${DEBUG:-0}
+    volumes:
+      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+  prometheus:
+    image: prom/prometheus:v2.25.0
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prom_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - 9090:9090
+
+  grafana:
+    image: grafana/grafana:7.5.7
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana:/etc/grafana/provisioning/datasources
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    ports:
+      - 16686:16686
+      - 4318:4318
+      - 5778:5778
+
+volumes:
+  grafana-data:
+  prom_data:
+\end{lstlisting}
+
+
+\subsection*{GRPC спецификация сервиса генерации}
+\begin{lstlisting}[]
+  syntax = "proto3";
+
+package proto.echo;
+
+option go_package = "./proto";
+
+service Core {
+  rpc Generate(GenerateRequest) returns (GenerateResponse);
+  rpc Discard(DiscardRequest) returns (DiscardResponse);
+  rpc Status(StatusRequest) returns (StatusResponse);
+}
+
+message GenerateRequest {
+  string Prompt = 1;
+}
+
+message GenerateResponse {
+  string ID = 2;
+}
+
+message StatusRequest {
+  string ID = 1;
+}
+
+message StatusResponse {
+  ImageGroup ImageGroup = 1;
+}
+
+message DiscardRequest {
+  string ID = 1;
+}
+
+message DiscardResponse {
+}
+
+message Image {
+  string ID = 1;
+  string Prompt = 2;
+  string URL = 3;
+  string Status = 4;
+}
+
+message ImageGroup {
+  string ID = 1;
+  repeated Image Images = 2;
+}
+\end{lstlisting}
+
