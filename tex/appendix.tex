@@ -6,7 +6,7 @@
 
 \chapter*{ПРИЛОЖЕНИЕ А}
 \addcontentsline{toc}{chapter}{ПРИЛОЖЕНИЕ А}
-\section*{Репозиторий приложения на GitHub}
+\section*{РЕПОЗИТОРИЙ ПРИЛОЖЕНИЯ НА GITHUB}
 
 Код приложения находится в открытом доступе на платформе коллаборации GitHub по ссылке, представленной в виде QR-кода.
 Практическая часть, упоминаемая в основной работе, представлена пакетами cmd и internal. Также присутствует docker-compose файлы необходимые для поднятия
@@ -15,15 +15,16 @@
 \begin{footnotesize}
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.69\textwidth]{img/frame.png}
+  \includegraphics[width=0.89\textwidth]{img/frame.png}
   \caption*{}
 \end{figure}
 
 \end{footnotesize}
 
-Далее будут приведены ключевые файлы конфигурации и описания приложения.
+Далее будут приведены ключевые файлы конфигурации Docker контейнеров, необходимых для запуска приложения,
+описания API, по которому сервис-шлюз коммуницирует с основным сервисом генерации, в формате Proto\-buf.
 
-\subsection*{Docker compose спецификация для локального запуска микросервисов}
+\section*{DOCKER COMPOSE СПЕЦИФИКАЦИЯ ДЛЯ ЛОКАЛЬНОГО ЗАПУСКА МИКРОСЕРВИСОВ}
 \begin{lstlisting}[]
 version: "3.8"
 
@@ -74,7 +75,7 @@ volumes:
 \end{lstlisting}
 
 
-\subsection*{GRPC спецификация сервиса генерации}
+\section*{GRPC СПЕЦИФИКАЦИЯ СЕРВИСА ГЕНЕРАЦИИ}
 \begin{lstlisting}[]
   syntax = "proto3";
 
